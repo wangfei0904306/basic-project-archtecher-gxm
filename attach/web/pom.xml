@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>attach</artifactId>
+        <groupId>com.guoxiaomei</groupId>
+        <version>1.0.0</version>
+    </parent>
+    <artifactId>attach-web</artifactId>
+    <name>attach-web</name>
+    <packaging>jar</packaging>
+
+    <properties>
+        <gxm.proto.auth.service.version>20180105</gxm.proto.auth.service.version>
+        <gxm.api.proto.version>20171215</gxm.api.proto.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.guoxiaomei</groupId>
+            <artifactId>attach-core-service</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.guoxiaomei.authcore</groupId>
+            <artifactId>authcore-service-web</artifactId>
+            <version>1.0.20171209</version>
+        </dependency>
+        <dependency>
+            <groupId>com.guoxiaomei</groupId>
+            <artifactId>attach-biz-service-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.guoxiaomei.proto</groupId>
+            <artifactId>model-user-proto</artifactId>
+            <version>SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.guoxiaomei.proto</groupId>
+            <artifactId>frontend-error-proto</artifactId>
+            <version>SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.guoxiaomei.proto</groupId>
+            <artifactId>api-proto</artifactId>
+            <version>${gxm.api.proto.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.18</version>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>2.6.0</version>
+        </dependency>
+    </dependencies>
+
+</project>

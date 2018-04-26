@@ -1,0 +1,92 @@
+image: rg.guoxiaomei.cn:5000/op/cibuild:latest
+
+stages:
+  - build04
+  - test04
+  - build
+  - test
+  - pushprod
+
+variables:
+  SERVICE_GROUP: crm
+  SERVICE_NAME: attach
+  TEST_COMPOSE_DIR: /data/docker-compose/test04
+  PERPROD_COMPOSE_DIR: /data/docker/compose/prod/per-prod01
+  BUILD_VAR_DIR: /home/builduser/vars
+  TAG_V_FILE: /data/tag/services_tag_v.txt
+
+before_script:
+#  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+  - export TEST_IMAGE_TAG=$(printf "%s-%s" $CI_PIPELINE_ID $(echo $CI_BUILD_REF | cut -b 1-8))
+  - export CONTAINER_TEST_IMAGE=$CI_REGISTRY_IMAGE:$TEST_IMAGE_TAG
+  - export CONTAINER_RELEASE_IMAGE=$CI_REGISTRY_IMAGE:latest
+
+build04:
+  stage: build04
+  only:
+    - test
+  tags:
+    - mvn
+  script:
+    - mvn install -Dmaven.test.skip=true -U
+    - docker build --pull -t $CONTAINER_TEST_IMAGE .
+    - docker push $CONTAINER_TEST_IMAGE
+
+test04:
+  stage: test04
+  only:
+    - test
+  when: manual
+  tags:
+    - tester04
+  when: manual
+  script:
+    - sed -ie "s/${crmreport^^}_TAG=.*/${crmreport^^}_TAG=$TEST_IMAGE_TAG/g" $BUILD_VAR_DIR/image_tag.env
+    - source $BUILD_VAR_DIR/image_tag.env
+    - cd $TEST_COMPOSE_DIR
+    - docker-compose pull $SERVICE_NAME
+    - docker-compose up -d --force-recreate $SERVICE_NAME
+
+build:
+  stage: build
+  only:
+    - master
+  tags:
+    - mvn
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - mvn clean package -Dmaven.test.skip -U
+    - export TAG_V=`cat $TAG_V_FILE |grep $SERVICE_NAME=|awk -F '=' '{printf $2}'| cut -b 2-`
+    - if [ ! $TAG_V ] ; then echo "$SERVICE_NAME=v0" >> $TAG_V_FILE; TAG_V=0; fi;
+    - export TAG_V_N=$[$TAG_V+1]
+    - export IMAGE_TAG=$(printf "v%s-%s" $TAG_V_N $CI_PIPELINE_ID)
+    - export CONTAINER_IMAGE=$CI_REGISTRY_IMAGE:$IMAGE_TAG
+    - docker build --pull -t $CONTAINER_IMAGE .
+    - docker push $CONTAINER_IMAGE
+    - sed -ie "s/$SERVICE_NAME=.*/$SERVICE_NAME=v$TAG_V_N/g" $TAG_V_FILE
+
+test:
+  stage: test
+  only:
+    - master
+  tags:
+    - k8s-test
+  when: manual
+  script:
+    - export k=`curl https://rg.guoxiaomei.cn:5000/v2/$SERVICE_GROUP/$SERVICE_NAME/tags/list`
+    - export TAG_V=`echo $k |jq ".tags" |grep $CI_PIPELINE_ID |awk -F '"' '{print $2}'`
+    - kubectl set image deployment/$SERVICE_NAME $SERVICE_NAME=rg.guoxiaomei.cn:5000/$SERVICE_GROUP/$SERVICE_NAME:$TAG_V
+
+pushprod:
+  stage: pushprod
+  only:
+    - master
+  tags:
+    - builder
+  when: manual
+  script:
+    - export k=`curl https://rg.guoxiaomei.cn:5000/v2/$SERVICE_GROUP/$SERVICE_NAME/tags/list`
+    - export TAG_V=`echo $k |jq ".tags" |grep $CI_PIPELINE_ID |awk -F '"' '{print $2}'`
+    - docker pull rg.guoxiaomei.cn:5000/$SERVICE_GROUP/$SERVICE_NAME:$TAG_V
+    - docker tag rg.guoxiaomei.cn:5000/$SERVICE_GROUP/$SERVICE_NAME:$TAG_V rg2.guoxiaomei.cn:5000/$SERVICE_GROUP/$SERVICE_NAME:$TAG_V
+    - docker push rg2.guoxiaomei.cn:5000/$SERVICE_GROUP/$SERVICE_NAME:$TAG_V

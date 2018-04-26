@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>attach</artifactId>
+        <groupId>com.guoxiaomei</groupId>
+        <version>1.0.0</version>
+        <relativePath>../../../</relativePath>
+    </parent>
+    <artifactId>attach-biz-service-impl</artifactId>
+    <name>attach-biz-service-impl</name>
+    <dependencies>
+        <dependency>
+            <groupId>com.guoxiaomei</groupId>
+            <artifactId>attach-common-service-integration</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.guoxiaomei</groupId>
+            <artifactId>attach-core-service</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+</project>

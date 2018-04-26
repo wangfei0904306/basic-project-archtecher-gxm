@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>attach</artifactId>
+        <groupId>com.guoxiaomei</groupId>
+        <version>1.0.0</version>
+        <relativePath>../../../</relativePath>
+    </parent>
+    <artifactId>attach-common-service-integration</artifactId>
+    <name>attach-common-service-integration</name>
+
+    <properties>
+        <grpc.version>1.8.0</grpc.version>
+        <gxm.proto.auth.service.version>20180203</gxm.proto.auth.service.version>
+        <gxm.masterdata.proto.version>prod2-20180224</gxm.masterdata.proto.version>
+        <gxm.masterdata.proto.grpc.version>prod2-20180224</gxm.masterdata.proto.grpc.version>
+        <gxm.gdcc.proto.grpc.version>prod2-20180224</gxm.gdcc.proto.grpc.version>
+        <gxm.crmapi.proto.version>20180326-crm-report-SNAPSHOT</gxm.crmapi.proto.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.guoxiaomei.scm.boot</groupId>
+            <artifactId>grpc-dependencies</artifactId>
+            <scope>compile</scope>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>com.guoxiaomei</groupId>
+            <artifactId>attach-common-util</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.guoxiaomei</groupId>
+            <artifactId>attach-core-model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.guoxiaomei.proto</groupId>
+            <artifactId>common-proto</artifactId>
+            <version>prod2-20180224</version>
+        </dependency>
+    </dependencies>
+</project>
